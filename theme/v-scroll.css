@@ -1,0 +1,67 @@
+/* v-scroll 组件样式 - 通过 CSS ::part() 暴露给外部控制 */
+
+v-scroll {
+  display: block;
+  position: relative;
+  overflow: hidden;
+
+  /* 滚动条轨道默认宽度 */
+  --track-width: 6px;
+  /* 滑块默认颜色 */
+  --thumb-color: rgba(0, 0, 0, 0.25);
+  /* 滑块悬停颜色 */
+  --thumb-hover-color: rgba(0, 0, 0, 0.45);
+  /* 滑块拖拽颜色 */
+  --thumb-active-color: rgba(0, 0, 0, 0.65);
+  /* 轨道背景 */
+  --track-color: transparent;
+  /* 轨道悬停背景 */
+  --track-hover-color: rgba(0, 0, 0, 0.06);
+  /* 端点间距 */
+  --track-padding: 3px;
+}
+
+/* 滚动轨道容器 */
+v-scroll::part(track) {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--track-width);
+  background: var(--track-color);
+  border-radius: calc(var(--track-width) / 2);
+  transition: background 0.2s, width 0.2s;
+  z-index: 10;
+}
+
+/* 轨道悬停时展开 */
+v-scroll::part(track):hover,
+v-scroll::part(track-active) {
+  width: calc(var(--track-width) * 1.5);
+  background: var(--track-hover-color);
+}
+
+/* 滑块 */
+v-scroll::part(bar) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  min-height: 16px;
+  background: var(--thumb-color);
+  border-radius: calc(var(--track-width) / 2);
+  cursor: grab;
+  transition: background 0.15s, border-radius 0.2s;
+  user-select: none;
+}
+
+/* 滑块悬停 */
+v-scroll::part(bar):hover {
+  background: var(--thumb-hover-color);
+}
+
+/* 滑块拖拽中 */
+v-scroll::part(bar-active) {
+  background: var(--thumb-active-color);
+  cursor: grabbing;
+  border-radius: calc(var(--track-width) / 4);
+}

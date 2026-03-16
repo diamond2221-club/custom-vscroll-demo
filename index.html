@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>v-scroll 自定义滚动条组件</title>
+
+  <!-- Import Map：将 "$/" 映射到 /theme/ 路径，支持主题切换 -->
+  <script type="importmap">
+  {
+    "imports": {
+      "$/": "/theme/"
+    }
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      gap: 24px;
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .demo-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* 演示：固定高度容器 */
+    .box {
+      width: 320px;
+      height: 300px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    /* v-scroll 填满容器 */
+    .box v-scroll {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 滚动条外观定制 */
+    .box v-scroll {
+      --track-width: 6px;
+      --thumb-color: rgba(0, 0, 0, 0.2);
+      --thumb-hover-color: rgba(0, 0, 0, 0.4);
+      --thumb-active-color: rgba(0, 0, 0, 0.6);
+      --track-color: transparent;
+      --track-hover-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* 主题 2：蓝色细滑块 */
+    .box.blue v-scroll {
+      --track-width: 4px;
+      --thumb-color: rgba(59, 130, 246, 0.5);
+      --thumb-hover-color: rgba(59, 130, 246, 0.8);
+      --thumb-active-color: rgba(59, 130, 246, 1);
+      --track-hover-color: rgba(59, 130, 246, 0.1);
+    }
+
+    /* 主题 3：暗色宽滑块 */
+    .box.dark {
+      background: #1e1e2e;
+      border-color: #313244;
+    }
+    .box.dark v-scroll {
+      --track-width: 8px;
+      --thumb-color: rgba(255,255,255,0.15);
+      --thumb-hover-color: rgba(255,255,255,0.3);
+      --thumb-active-color: rgba(255,255,255,0.5);
+      --track-hover-color: rgba(255,255,255,0.05);
+    }
+
+    .content {
+      padding: 16px 20px;
+    }
+
+    .content p {
+      margin-bottom: 12px;
+      line-height: 1.7;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .box.dark .content p {
+      color: #cdd6f4;
+    }
+
+    .content p:last-child { margin-bottom: 0; }
+
+    label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 4px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="demo-col">
+  <h1>v-scroll Demo</h1>
+
+  <div>
+    <label>默认主题</label>
+    <div class="box">
+      <v-scroll>
+        <div class="content">
+          <p>自定义滚动条组件 v-scroll，基于原生 Web Components 实现。</p>
+          <p>使用 overflow: auto 真实滚动容器，通过 CSS 隐藏系统滚动条，并用自定义 DOM 完全接管外观。</p>
+          <p>支持 ResizeObserver 动态探测内容高度变化，滑块高度自适应。</p>
+          <p>使用 Pointer Events + setPointerCapture 实现防脱离拖拽。</p>
+          <p>通过 Import Map 支持主题热切换，修改 importmap 即可更换样式。</p>
+          <p>零依赖，纯原生实现，可嵌入任意页面。</p>
+          <p>Vite 插件自动将 CSS 压缩为 ESM 模块注入。</p>
+          <p>组件销毁时自动解绑所有事件监听和观察者。</p>
+          <p>这是第 9 段内容，用于测试足够长的滚动距离。</p>
+          <p>这是第 10 段内容，滚动到底部时滑块应贴近轨道底端。</p>
+        </div>
+      </v-scroll>
+    </div>
+  </div>
+
+  <div>
+    <label>蓝色主题</label>
+    <div class="box blue">
+      <v-scroll>
+        <div class="content">
+          <p>蓝色主题演示：通过 CSS 变量定制滑块颜色。</p>
+          <p>--thumb-color 控制默认颜色，--thumb-hover-color 控制悬停颜色，--thumb-active-color 控制拖拽颜色。</p>
+          <p>轨道宽度通过 --track-width 控制，悬停时会自动扩展为 1.5 倍宽度。</p>
+          <p>滑块最小高度为 16px，防止内容过多时滑块过小不易点击。</p>
+          <p>点击轨道空白区域时，会以平滑动画滚动到对应位置（scrollBehavior: smooth）。</p>
+          <p>这是第 6 段内容，继续测试滚动效果。</p>
+          <p>拖拽滑块时使用 setPointerCapture 锁定指针，即使鼠标移出也不会中断拖拽。</p>
+          <p>这是第 8 段内容，已经很长了。</p>
+        </div>
+      </v-scroll>
+    </div>
+  </div>
+</div>
+
+<div class="demo-col">
+  <h1>&nbsp;</h1>
+
+  <div>
+    <label>暗色主题</label>
+    <div class="box dark">
+      <v-scroll>
+        <div class="content">
+          <p>暗色主题演示：背景深色，滑块使用半透明白色。</p>
+          <p>所有颜色通过 CSS 变量控制，无需修改组件源码。</p>
+          <p>组件通过 customElements.define 注册为 v-scroll 标签。</p>
+          <p>Shadow DOM 隔离内部结构，::part() 伪元素允许外部样式穿透。</p>
+          <p>track 部分（轨道）和 bar 部分（滑块）都可以通过 ::part() 精确控制样式。</p>
+          <p>拖拽状态会自动添加 bar-active 和 track-active part 属性。</p>
+          <p>这是第 7 段内容，继续向下滚动可以看到更多。</p>
+          <p>这是第 8 段内容，滚动条应该响应鼠标滚轮、触摸滑动等所有原生滚动方式。</p>
+          <p>这是第 9 段内容。</p>
+          <p>这是最后一段，到底了。</p>
+        </div>
+      </v-scroll>
+    </div>
+  </div>
+
+  <div>
+    <label>内容不足时无滚动条</label>
+    <div class="box">
+      <v-scroll>
+        <div class="content">
+          <p>这个容器内容较少，不需要滚动。</p>
+          <p>此时滚动条不应该显示，由 ResizeObserver 动态判断。</p>
+        </div>
+      </v-scroll>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/src/v-scroll.js"></script>
+</body>
+</html>
