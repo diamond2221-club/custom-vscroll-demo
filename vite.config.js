@@ -3,11 +3,15 @@ import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { transform } from 'lightningcss';
 
-// Import Map 内容：将 "$/" 映射到 "/theme/" 路径
+// GitHub Pages 部署子路径，CI 环境下通过环境变量注入
+// 本地 dev 用 "/"，Pages 用 "/custom-vscroll-demo/"
+const BASE = process.env.GITHUB_ACTIONS ? '/custom-vscroll-demo/' : '/';
+
+// Import Map 内容：将 "$/" 映射到 "{base}theme/" 路径，随 base 变化
 const IMPORT_MAP = `<script type="importmap">
 {
   "imports": {
-    "$/": "/theme/"
+    "$/": "${BASE}theme/"
   }
 }
 <\/script>`;
@@ -57,6 +61,7 @@ const cssModulePlugin = () => ({
 });
 
 export default defineConfig({
+  base: BASE,
   plugins: [cssModulePlugin()],
   build: {
     outDir: 'dist',
